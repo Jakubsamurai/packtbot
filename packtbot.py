@@ -1,6 +1,7 @@
 #! /usr/bin/python3
-import contextlib
 import smtplib
+import os
+import tempfile
 from selenium import webdriver
 
 from selenium.webdriver.chrome.options import Options
@@ -23,10 +24,10 @@ go to https://www.packtpub.com/packt/offers/free-learning
 click on: driver.findElement(By.cssSelector("value='Claim Your Free eBook'"))
 click on first class="float-right toggle-product-line shown"
 click on driver.findElement(By.cssSelector("format='pdf'"))
-HANDLE THE DOWNLOAD... HARD
+HANDLE THE DOWNLOAD...
 http://stackoverflow.com/questions/18009310/how-to-download-any-file-using-selenium-webdriver
 """
-
+# change default download behaviour
 chrome_options = Options()
 driver = webdriver.Chrome(chrome_options=chrome_options)
 
@@ -63,7 +64,7 @@ def browser_bot():
         driver.implicitly_wait(3)
         driver.get("https://www.packtpub.com/packt/offers/free-learning")
         driver.implicitly_wait(4)
-        # scroll one page
+        # scroll one page down
         driver.execute_script("window.scrollBy(0, window.innerHeight)")
         #element = WebDriverWait(driver, 12).until(
         #EC.presence_of_element_located((By.CSS_SELECTOR, "value='Claim Your Free eBook'"))
@@ -73,7 +74,20 @@ def browser_bot():
         free_ebook = driver.find_element_by_css_selector('input[value="Claim Your Free eBook"]')
         print("free ebook element almost clicked")
         free_ebook.click()
+        print("free ebook element clicked")
+        book_link = driver.find_element_by_class_name('product-top-line')
+        book_link.click()
+        print("book view expanded")
+        driver.implicitly_wait(2)
 
+        download_pdf = driver.find_element_by_xpath('//*[@id="product-account-list"]/div[1]/div[2]/div[2]/a[1]')
+        download_epub = driver.find_element_by_xpath('//*[@id="product-account-list"]/div[1]/div[2]/div[2]/a[2]')
+        print("selected by xpath")
+        pdf_link = download_pdf.get_attribute("href")
+        epub_link = download_epub.get_attribute("href")
+        print(pdf_link, epub_link)
+        send_mail(pdf_link=pdf_link, epub_link=epub_link)
+        
     except Exception as e:
         print(e)
         driver.quit()
@@ -82,11 +96,11 @@ def browser_bot():
 # ChromeProfile.setPreference("browser.helperApps.neverAsk.saveToDisk","application/pdf,text/csv");
 # developers@finametrix.com
 
-def send_email():
+def send_email(pdf_link, epub_link):
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.starttls()
     server.login("YOUR EMAIL ADDRESS", "YOUR PASSWORD")
-    msg = "YOUR MESSAGE!"
+    msg = "Here is the book of the day: " + pdf_link + epub_link
     server.sendmail("YOUR EMAIL ADDRESS", "THE EMAIL ADDRESS TO SEND TO", msg)
     server.quit()
 

@@ -1,10 +1,8 @@
-<<<<<<< HEAD
 appdirs==1.4.0
 packaging==16.8
 pyparsing==2.1.10
 selenium==3.0.2
 six==1.10.0
-=======
 attrs==16.3.0
 cffi==1.9.1
 click==6.7
@@ -32,4 +30,3 @@ Twisted==16.6.0
 w3lib==1.16.0
 Werkzeug==0.11.15
 zope.interface==4.3.3
->>>>>>> 6f1bbcd920baacf78d648593ef3a27746bcd2404
